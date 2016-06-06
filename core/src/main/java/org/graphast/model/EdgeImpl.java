@@ -1,12 +1,12 @@
 package org.graphast.model;
 
-import it.unimi.dsi.fastutil.BigArrays;
-
 import java.util.Arrays;
 import java.util.List;
 
 import org.graphast.exception.GraphastException;
 import org.graphast.geometry.Point;
+
+import it.unimi.dsi.fastutil.BigArrays;
 
 public class EdgeImpl implements Edge {
 	//private Logger logger = LoggerFactory.getLogger(this.getClass());

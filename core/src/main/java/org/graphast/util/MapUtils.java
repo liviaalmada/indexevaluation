@@ -1,8 +1,8 @@
 package org.graphast.util;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-
 import java.util.Map;
+
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
 
 public class MapUtils {
 

@@ -2,7 +2,6 @@ package org.graphast.query.knn;
 
 import java.util.List;
 
-import org.graphast.query.knn.NearestNeighbor;
 import org.graphast.query.route.shortestpath.model.TimeEntry;
 
 /**

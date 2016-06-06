@@ -26,11 +26,11 @@ public class Configuration {
 
 	public static final String USER_HOME = System.getProperty("user.home");
 
-	public static final String GRAPHAST_DIR = USER_HOME + "/graphast";
+	public static final String GRAPHAST_DIR = USER_HOME + "//graphast";
 
 	public static final String CONFIG_FILE_BASE_NAME = "config.properties";
 
-	public static final String CONFIG_FILE = GRAPHAST_DIR + "/" + CONFIG_FILE_BASE_NAME;
+	public static final String CONFIG_FILE = GRAPHAST_DIR + "//" + CONFIG_FILE_BASE_NAME;
 	
 	private static Logger log = LoggerFactory.getLogger(Configuration.class);
 	

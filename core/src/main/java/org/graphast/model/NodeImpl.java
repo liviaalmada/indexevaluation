@@ -2,9 +2,10 @@ package org.graphast.model;
 
 import static org.graphast.util.GeoUtils.latLongToDouble;
 import static org.graphast.util.GeoUtils.latLongToInt;
-import it.unimi.dsi.fastutil.BigArrays;
 
 import org.graphast.exception.GraphastException;
+
+import it.unimi.dsi.fastutil.BigArrays;
 
 public class NodeImpl implements Node {
 

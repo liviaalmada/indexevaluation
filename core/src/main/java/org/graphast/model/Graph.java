@@ -1,10 +1,5 @@
 package org.graphast.model;
 
-import it.unimi.dsi.fastutil.ints.IntBigArrayBigList;
-import it.unimi.dsi.fastutil.ints.IntSet;
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.LongList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -15,6 +10,11 @@ import org.graphast.geometry.BBox;
 import org.graphast.geometry.PoI;
 import org.graphast.geometry.Point;
 import org.graphast.util.FileUtils;
+
+import it.unimi.dsi.fastutil.ints.IntBigArrayBigList;
+import it.unimi.dsi.fastutil.ints.IntSet;
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.LongList;
 
 
 public interface Graph {

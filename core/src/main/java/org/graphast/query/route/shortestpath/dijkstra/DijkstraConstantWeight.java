@@ -1,7 +1,5 @@
 package org.graphast.query.route.shortestpath.dijkstra;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Set;
@@ -12,6 +10,8 @@ import org.graphast.model.GraphBounds;
 import org.graphast.model.Node;
 import org.graphast.query.route.shortestpath.model.RouteEntry;
 import org.graphast.query.route.shortestpath.model.TimeEntry;
+
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
 
 public class DijkstraConstantWeight extends Dijkstra {
 

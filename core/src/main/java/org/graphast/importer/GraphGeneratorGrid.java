@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import org.graphast.importer.CostGenerator;
 import org.graphast.model.Edge;
 import org.graphast.model.EdgeImpl;
 import org.graphast.model.GraphBounds;

@@ -1,7 +1,5 @@
 package org.graphast.query.route.shortestpath.astar;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
@@ -13,6 +11,8 @@ import org.graphast.query.route.shortestpath.model.RouteEntry;
 import org.graphast.query.route.shortestpath.model.TimeEntry;
 
 import com.graphhopper.util.DistanceCalcEarth;
+
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
 
 public class AStarConstantWeight extends AStar{
 	

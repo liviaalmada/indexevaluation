@@ -2,8 +2,6 @@ package org.graphast.importer;
 
 import java.util.HashMap;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-
 import org.graphast.config.Configuration;
 import org.graphast.model.Edge;
 import org.graphast.model.GraphBounds;

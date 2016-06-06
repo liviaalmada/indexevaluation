@@ -1,11 +1,5 @@
 package org.graphast.query.route.shortestpath.dijkstra;
 
-import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import it.unimi.dsi.fastutil.objects.ObjectCollection;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
@@ -18,6 +12,12 @@ import org.graphast.model.GraphBounds;
 import org.graphast.model.Node;
 import org.graphast.query.model.Bound;
 import org.graphast.query.model.QueueEntry;
+
+import it.unimi.dsi.fastutil.longs.Long2IntMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectCollection;
 
 public class DijkstraGeneric {
 	private GraphBounds graph;
