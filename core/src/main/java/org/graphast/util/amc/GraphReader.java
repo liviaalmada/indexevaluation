@@ -1,9 +1,6 @@
 package org.graphast.util.amc;
 
-import java.io.IOException;
-
 import org.graphast.config.Configuration;
-import org.graphast.importer.amc.POISensorsImporter;
 import org.graphast.model.GraphImpl;
 
 public class GraphReader {
@@ -16,11 +13,6 @@ public class GraphReader {
 		graph.load();
 		System.out.println(graph.getNumberOfEdges());
 		System.out.println(graph.getNumberOfNodes());
-		try {
-			POISensorsImporter.runImport("sensores", graph);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
 	}
 }
