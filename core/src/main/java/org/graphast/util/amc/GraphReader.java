@@ -13,6 +13,5 @@ public class GraphReader {
 		graph.load();
 		System.out.println(graph.getNumberOfEdges());
 		System.out.println(graph.getNumberOfNodes());
-		
 	}
 }
