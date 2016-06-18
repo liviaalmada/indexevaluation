@@ -1,17 +1,19 @@
 package org.graphast.util.amc;
 
-import org.graphast.config.Configuration;
+import org.graphast.importer.CostGenerator;
 import org.graphast.model.GraphImpl;
 
 public class GraphReader {
 
-	private static final String PATH_GRAPH = Configuration.USER_HOME
-			+ "/graphast/test/example";
-	
+	private static final String PATH_GRAPH = "C:\\Users\\Lívia\\git\\graphast\\core\\src\\main\\resources\\";
+
 	public static void main(String[] args) {
-		GraphImpl graph = new GraphImpl(PATH_GRAPH+"view_exp_100k");
+		GraphImpl graph = new GraphImpl(PATH_GRAPH+"fortaleza_100k");
 		graph.load();
-		System.out.println(graph.getNumberOfEdges());
-		System.out.println(graph.getNumberOfNodes());
+		
+		CostGenerator.generateAllSyntheticEdgesCosts(graph);
+		
+		graph.save();
+		
 	}
 }

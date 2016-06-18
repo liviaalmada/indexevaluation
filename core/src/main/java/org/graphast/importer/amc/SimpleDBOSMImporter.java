@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import org.graphast.config.Configuration;
 import org.graphast.importer.Importer;
 import org.graphast.model.Edge;
 import org.graphast.model.EdgeImpl;
@@ -27,14 +26,13 @@ import org.slf4j.LoggerFactory;
 public class SimpleDBOSMImporter implements Importer {
 
 	private GraphastDAO dao;
-	private Graph graph;
+	protected Graph graph;
 	private String table;
 	private final int FIELD_ID_LINESTRING = 1;
 	private final int FIELD_LINESTRING = 2;
 	private final int SIZE_INTERVAL = 96;
 	protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-	private static final String PATH_GRAPH = Configuration.USER_HOME
-			+ "/graphast/test/example";
+	protected static final String PATH_GRAPH = "C:\\Users\\Lívia\\git\\graphast\\core\\src\\main\\resources\\";
 
 	public SimpleDBOSMImporter(String table, String directory) {
 		this.table = table;
@@ -46,7 +44,6 @@ public class SimpleDBOSMImporter implements Importer {
 			IOException {
 
 		ResultSet result = dao.getPoints(table);
-		int pointCount = 0;
 		while (result.next()) {
 			LineString lineString = new LineString(
 					result.getString(FIELD_LINESTRING));
@@ -55,27 +52,33 @@ public class SimpleDBOSMImporter implements Importer {
 					result.getString(FIELD_LINESTRING)));
 
 			int idRoad = result.getInt(FIELD_ID_LINESTRING);
-			Node previousNode = null;
-
-			for (Point point : arrayPoints) {
-				pointCount++;
-				LOGGER.info(String.format("Point [x,y]: %s,%s", point.getX(),
-						point.getY()));
-				Node node = addNode(idRoad, point);
-
-				addEdge(idRoad, previousNode, node);
-
-				LOGGER.info(String.format("Graph now has %s nodes",
-						graph.getNumberOfNodes()));
-				LOGGER.info(String.format("Graph now has %s edges",
-						graph.getNumberOfEdges()));
-
-				previousNode = node;
-			}
+			loadFromArrayPoints(arrayPoints, idRoad);
 		}
-		LOGGER.info(String.format("Total points parsed are: %s", pointCount));
+		
 		ConnectionJDBC.getConnection().close();
 
+	}
+
+	protected void loadFromArrayPoints(Point[] arrayPoints, int idRoad) {
+		Node previousNode = null;
+		int pointCount = 0;
+
+		for (Point point : arrayPoints) {
+			pointCount++;
+			LOGGER.info(String.format("Point [x,y]: %s,%s", point.getX(),
+					point.getY()));
+			Node node = addNode(idRoad, point);
+
+			addEdge(idRoad, previousNode, node);
+
+			LOGGER.info(String.format("Graph now has %s nodes",
+					graph.getNumberOfNodes()));
+			LOGGER.info(String.format("Graph now has %s edges",
+					graph.getNumberOfEdges()));
+
+			previousNode = node;
+		}
+		LOGGER.info(String.format("Total points parsed are: %s", pointCount));
 	}
 
 	private void addEdge(int idRoad, Node previousNode, Node node) {
@@ -112,7 +115,6 @@ public class SimpleDBOSMImporter implements Importer {
 	}
 
 	public static void runImport(String tableName) throws IOException {
-
 		SimpleDBOSMImporter importer = new SimpleDBOSMImporter(tableName,
 				PATH_GRAPH + tableName);
 		Graph graph = importer.execute();
@@ -142,9 +144,8 @@ public class SimpleDBOSMImporter implements Importer {
 
 	public static void main(String[] args) {
 		try {
-			SimpleDBOSMImporter.runImport("view_exp_100k");
+			SimpleDBOSMImporter.runImport("view_exp_300mil");
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
