@@ -9,6 +9,6 @@ import org.graphast.query.knn.NearestNeighbor;
  */
 public interface RNNCandidatesSelector{
 	
-	public NearestNeighbor[] search();
+	public NearestNeighbor[] search(Long idSource);
 
 }
