@@ -1,6 +1,5 @@
 package org.graphast.query.rnn.spatial.pruning;
 
-import org.graphast.model.Graph;
 import org.graphast.query.knn.NearestNeighbor;
 
 /**
@@ -9,5 +8,5 @@ import org.graphast.query.knn.NearestNeighbor;
  *
  */
 public interface RNNCandidatesFilter {
-	public NearestNeighbor[] search(Graph graph);
+	public NearestNeighbor[] search();
 }
