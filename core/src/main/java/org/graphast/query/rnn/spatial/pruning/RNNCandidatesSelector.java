@@ -1,5 +1,7 @@
 package org.graphast.query.rnn.spatial.pruning;
 
+import java.util.List;
+
 import org.graphast.query.knn.NearestNeighbor;
 
 /**
@@ -9,6 +11,7 @@ import org.graphast.query.knn.NearestNeighbor;
  */
 public interface RNNCandidatesSelector{
 	
-	public NearestNeighbor[] search(Long idSource);
+	public List<NearestNeighbor> search(Long idSource, int k);
+	public List<NearestNeighbor> search(Long idSource, double range);
 
 }
