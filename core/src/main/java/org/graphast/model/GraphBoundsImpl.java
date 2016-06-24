@@ -240,4 +240,9 @@ public class GraphBoundsImpl extends GraphImpl implements GraphBounds, Serializa
 		}
 		return this.reverseGraph;
 	}
+	
+	public void loadFromGraph(){
+		super.load();
+		this.createBounds();
+	}
 }

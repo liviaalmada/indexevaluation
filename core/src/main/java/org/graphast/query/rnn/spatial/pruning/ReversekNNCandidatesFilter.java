@@ -7,10 +7,13 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.graphast.model.Graph;
+import org.graphast.model.GraphBoundsImpl;
 import org.graphast.model.GraphImpl;
 import org.graphast.model.Node;
 import org.graphast.query.knn.NearestNeighbor;
 import org.graphast.query.model.LowerBoundEntry;
+import org.graphast.query.rnn.RNNBacktrackingSearch;
+import org.graphast.query.rnn.RNNBreadthFirstSearch;
 import org.graphast.query.route.shortestpath.astar.AStarLinearFunction;
 import org.graphast.query.route.shortestpath.model.Path;
 import org.graphast.query.route.shortestpath.model.RouteEntry;
@@ -60,46 +63,60 @@ public class ReversekNNCandidatesFilter  extends AStarLinearFunction implements 
 		return minPath;
 	}
 
-	public Path astarSearch(Long idQuery, Date time, List<NearestNeighbor> nns) {
+	public ArrayList<NearestNeighbor> astarSearch(Long idQuery, Date time, List<NearestNeighbor> nns) {
 		HashMap<Long, Integer> wasTraversed = new HashMap<Long, Integer>();
 		HashMap<Long, RouteEntry> parents = new HashMap<Long, RouteEntry>();
 		PriorityQueue<LowerBoundEntry> queue = new PriorityQueue<LowerBoundEntry>();
 		NearestNeighbor nn = new NearestNeighbor();
 		Node target = graph.getNode(idQuery);
-						
+		int k = 5;
+		ArrayList<NearestNeighbor> ret = new ArrayList<>();
 		for (NearestNeighbor candidate : nns) {
 			long vid = candidate.getId();
 			int arrivalTime =  DateUtils.dateToMilli(time);
 			int travelTime = 0;
 			int lowerBound = (int) (DistanceUtils.timeCost(graph.getNode(candidate.getId()), graph.getNode(idQuery)));
-			queue.offer(new LowerBoundEntry(vid,travelTime,arrivalTime,vid,lowerBound));
+			queue.offer(new LowerBoundEntry(vid,travelTime,arrivalTime,-1,lowerBound));
+			wasTraversed.put(vid, 0);
 		}
-		
-		while((queue.peek()) != null){
+		int numberOfVisitedVertex = 0; int found=0;
+		while((queue.peek()) != null && found < k){
 			LowerBoundEntry removed = queue.poll();
+			//
 			if(removed.getId()==idQuery){
+				List<RouteEntry> reconstructPath = super.reconstructPath(idQuery, parents);
+				//System.out.println(reconstructPath); 
+				ArrayList<Long>path = new ArrayList<>();
+				for (RouteEntry routeEntry : reconstructPath) {
+					path.add(graph.getEdge(routeEntry.getEdgeId()).getFromNode());
+				}
+				path.add(idQuery);
+				numberOfVisitedVertex++;
+				ret.add(new NearestNeighbor(path.get(0), removed.getTravelTime(), path, numberOfVisitedVertex ));
+				found ++;
 				//log.debug("Query found value: "+removed);
-				break;
 			}else{
 				//log.debug("Removed entry value: "+removed);
 				expandVertex(target, removed, wasTraversed, queue, parents);	
+				numberOfVisitedVertex++;
 			}
 			
 		}
-		List<RouteEntry> reconstructPath = super.reconstructPath(idQuery, parents);
-		System.out.println(reconstructPath);
-		Path p = new Path();
-		p.constructPath(idQuery, parents, graph);
-		return p;
+		return ret;
+		
 	}
 
 	
 
 	public static void main(String[] args) {
-		GraphImpl graph = new GraphImpl(PATH_GRAPH + "fortaleza_100k1pois");
+		GraphImpl graph = new GraphImpl(PATH_GRAPH + "view_exp_100k500Pois");
 		graph.load();
 
-		long idQuery = 3025;
+		//long idQuery = 25; // nao encontra
+		//long idQuery = 30; // idem
+		long idQuery = 520; //idem
+		//long idQuery = 5000;
+//		long idQuery = 4500;
 		Node query = graph.getNode(idQuery);
 
 		List<NearestNeighbor> nns = new ArrayList<>();
@@ -113,11 +130,28 @@ public class ReversekNNCandidatesFilter  extends AStarLinearFunction implements 
 		}
 
 		ReversekNNCandidatesFilter filter = new ReversekNNCandidatesFilter(graph);
-		Path astarSearch = filter.astarSearch(idQuery, new Date(), nns);
-		System.out.println(astarSearch);
 		
-		Path search = filter.search(idQuery, new Date(), nns);
-		System.out.println(search);
+		Date timeout = DateUtils.parseDate(1, 30, 00);
+//		Date timestamp = DateUtils.parseDate(9, 00, 00);
+		Date timestamp = DateUtils.parseDate(12, 00, 00);
+		log.debug(System.currentTimeMillis()+"");
+		ArrayList<NearestNeighbor> astarSearch = filter.astarSearch(idQuery, timestamp, nns);
+		log.debug(System.currentTimeMillis()+"");
+		System.out.println(astarSearch );
+		
+			
+		GraphBoundsImpl gbounds = new GraphBoundsImpl(PATH_GRAPH + "view_exp_100k500Pois");
+		
+		gbounds.loadFromGraph();
+		
+		RNNBreadthFirstSearch rnnBFS = new RNNBreadthFirstSearch(gbounds);
+		log.debug(System.currentTimeMillis()+"");
+		NearestNeighbor sol = rnnBFS.search(gbounds.getNode(idQuery), timeout, timestamp);
+		log.debug(System.currentTimeMillis()+"");
+		System.out.println(sol + " "+ sol.getTravelTime());
+		
+	//	Path search = filter.search(idQuery, new Date(), nns);
+	//	System.out.println(search);
 
 	}
 
