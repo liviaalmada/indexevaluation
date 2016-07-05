@@ -23,6 +23,7 @@ import org.graphast.util.DistanceUtils;
 public abstract class AStar extends AbstractShortestPathService{
 
 	//private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private int numberOfVisitedNodes;
 	
 	public AStar(Graph graphAdapter) {
 		super(graphAdapter);
@@ -53,7 +54,7 @@ public abstract class AStar extends AbstractShortestPathService{
 		LowerBoundEntry removed = null;
 		int targetId = convertToInt(target.getId());
 		int t = DateUtils.dateToMilli(time);
-		
+		numberOfVisitedNodes = 0;
 		init(source, target, queue, parents, t);
 		
 		while(!queue.isEmpty()){
@@ -63,10 +64,12 @@ public abstract class AStar extends AbstractShortestPathService{
 			if(removed.getId() == targetId){
 				Path path = new Path();
 				path.constructPath(removed.getId(), parents, graph);
+				path.setNumberVisitedNodes(numberOfVisitedNodes);
 				return path;
 			}
 			
 			expandVertex(target, removed, wasTraversed, queue, parents);
+			numberOfVisitedNodes++;
 		}
 		throw new PathNotFoundException("Path not found between (" + source.getLatitude() + "," + source.getLongitude() + ") and (" 
 				+ target.getLatitude() + "," + target.getLongitude() + ")");
@@ -77,6 +80,7 @@ public abstract class AStar extends AbstractShortestPathService{
 		int sid = convertToInt(source.getId());
 		
 		queue.offer(new LowerBoundEntry(sid, 0, t, -1,	(int) DistanceUtils.timeCost(source, target)));
+		numberOfVisitedNodes++;
 
 //		parents.put(sourceId, null);		
 	}

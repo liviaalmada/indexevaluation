@@ -104,24 +104,28 @@ public class RNNAstarSearch extends AStarLinearFunction implements IRNNTimeDepen
 	}
 
 	public static void main(String[] args) {
-		String PATH_GRAPH = "C:\\Users\\Lívia\\git\\graphast\\core\\src\\main\\resources\\";
-		GraphImpl g;
-		GraphImpl graph;
+		String PATH_GRAPH = "C:\\Users\\Lívia\\git\\graphast\\core\\src\\main\\resources\\view_exp_100k100Pois";
+		
+		GraphImpl graphReverse, graph;
 		RNNAstarSearch rnnAstar;
 		RNNBacktrackingSearch rnnBack;
 		RNNBreadthFirstSearch rnnBFS;
-		g = new GraphImpl(PATH_GRAPH + "view_exp_100k500Pois");
-		g.load();
-		graph = new GraphBoundsImpl(g.getAbsoluteDirectory());
+		
+		//g = new GraphImpl(PATH_GRAPH + "view_exp_100k500Pois");
+		graph = new GraphBoundsImpl(PATH_GRAPH);
 		((GraphBoundsImpl) graph).loadFromGraph();
+		
+		graphReverse = new GraphBoundsImpl(PATH_GRAPH);
+		((GraphBoundsImpl) graphReverse).loadFromGraph();
+		
 		rnnAstar = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 100);
 		rnnBack = new RNNBacktrackingSearch((GraphBounds) graph);
-		rnnBFS = new RNNBreadthFirstSearch((GraphBounds) graph);
+		rnnBFS = new RNNBreadthFirstSearch((GraphBounds) graphReverse);
 		ShortestPathService shortestPathService = new AStarLinearFunction(graph);
 
 		Date timeout = DateUtils.parseDate(2, 00, 00);
 		Date timestamp = DateUtils.parseDate(12, 00, 00);
-		Node query = graph.getNode(4000);
+		Node query = graphReverse.getNode(73290);
 		
 		NearestNeighbor nnAstar = rnnAstar.search(query, timeout, timestamp);
 		System.out.println(nnAstar.getTravelTime());

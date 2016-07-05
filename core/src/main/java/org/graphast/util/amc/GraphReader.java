@@ -1,18 +1,27 @@
 package org.graphast.util.amc;
 
 import org.graphast.importer.CostGenerator;
+import org.graphast.importer.SyntheticPoisGenerator;
 import org.graphast.model.GraphImpl;
+
+/**
+ * A main class to read a graph, generate synthetic travel time and pois.
+ * Tun with parameters: -Xms2048m  -Xmx2048m
+ * @author Lívia
+ *
+ */
 
 public class GraphReader {
 
 	private static final String PATH_GRAPH = "C:\\Users\\Lívia\\git\\graphast\\core\\src\\main\\resources\\";
 
 	public static void main(String[] args) {
-		GraphImpl graph = new GraphImpl(PATH_GRAPH+"fortaleza_100k");
+		GraphImpl graph = new GraphImpl(PATH_GRAPH+"view_exp_100k");
 		graph.load();
-		
 		CostGenerator.generateAllSyntheticEdgesCosts(graph);
-		
+		SyntheticPoisGenerator.generateRandomSyntheticPois(graph, 0.1, 1);
+		System.out.println(graph.getPOIs().size());
+		graph.setDirectory(PATH_GRAPH+"fortaleza_100k"+"1pois");
 		graph.save();
 		
 	}

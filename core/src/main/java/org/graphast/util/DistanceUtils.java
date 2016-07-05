@@ -49,7 +49,8 @@ public class DistanceUtils {
 	
 	
 	public static int timeCost(Node fromNode, Node toNode){
-		return (int) ((int) distanceLatLong(fromNode, toNode)/88.51392);
+//		return (int) ((int) distanceLatLong(fromNode, toNode)/88.51392);
+		return (int) ((int) distanceLatLong(fromNode, toNode)/24.4444)*1000;
 	}
 	
 	

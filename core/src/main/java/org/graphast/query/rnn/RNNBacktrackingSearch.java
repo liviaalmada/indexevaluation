@@ -8,6 +8,8 @@ import org.graphast.exception.PathNotFoundException;
 import org.graphast.model.GraphBounds;
 import org.graphast.model.Node;
 import org.graphast.query.knn.NearestNeighbor;
+import org.graphast.query.route.shortestpath.ShortestPathService;
+import org.graphast.query.route.shortestpath.astar.AStarLinearFunction;
 import org.graphast.query.route.shortestpath.dijkstra.Dijkstra;
 import org.graphast.query.route.shortestpath.dijkstra.DijkstraLinearFunction;
 import org.graphast.query.route.shortestpath.model.Path;
@@ -15,7 +17,7 @@ import org.graphast.util.DateUtils;
 
 public class RNNBacktrackingSearch implements IRNNTimeDependent {
 
-	private GraphBounds graph;
+	protected GraphBounds graph;
 
 	public RNNBacktrackingSearch(GraphBounds graphBounds) {
 		this.graph = graphBounds;
@@ -30,12 +32,13 @@ public class RNNBacktrackingSearch implements IRNNTimeDependent {
 		Path pathResult = null;
 		int numberVisitedNodes = 0;
 
-		Dijkstra dijkstraShortestPathLinearFunction = new DijkstraLinearFunction(graph);
+		//Dijkstra shortesPath = new DijkstraLinearFunction(graph);
+		ShortestPathService shortesPath = new AStarLinearFunction(graph);
 
 		for (Long poi : graph.getPoiIds()) {
 			try {
 				Node target = graph.getNode(poi);
-				Path path = dijkstraShortestPathLinearFunction.shortestPath(
+				Path path = shortesPath.shortestPath(
 						target.getId(), root.getId(), timestamp);
 
 				if (path.getTotalCost() <= maxTravelTimeMillisenconds
@@ -46,7 +49,7 @@ public class RNNBacktrackingSearch implements IRNNTimeDependent {
 					numberVisitedNodes = numberVisitedNodes + path.getNumberVisitedNodes();
 				}
 			} catch (PathNotFoundException e) {
-				// System.err.println(e.getMessage());
+				 //System.err.println(e.getMessage());
 			}
 		}
 

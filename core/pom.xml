@@ -103,6 +103,12 @@
 			<version>3.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.eatthepath</groupId>
+			<artifactId>jvptree</artifactId>
+			<version>0.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

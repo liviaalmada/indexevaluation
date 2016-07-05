@@ -13,6 +13,7 @@ import org.graphast.model.Node;
 import org.graphast.model.NodeImpl;
 import org.graphast.query.dao.postgis.GraphastDAO;
 import org.graphast.util.ConnectionJDBC;
+import org.graphast.util.DistanceUtils;
 import org.graphast.util.GeoUtils;
 import org.postgis.LineString;
 import org.postgis.Point;
@@ -40,21 +41,18 @@ public class SimpleDBOSMImporter implements Importer {
 		graph = new GraphImpl(directory);
 	}
 
-	private void loadNodes() throws SQLException, ClassNotFoundException,
-			IOException {
+	private void loadNodes() throws SQLException, ClassNotFoundException, IOException {
 
 		ResultSet result = dao.getPoints(table);
 		while (result.next()) {
-			LineString lineString = new LineString(
-					result.getString(FIELD_LINESTRING));
+			LineString lineString = new LineString(result.getString(FIELD_LINESTRING));
 			Point[] arrayPoints = lineString.getPoints();
-			LOGGER.info(String.format("registro: %s",
-					result.getString(FIELD_LINESTRING)));
+			LOGGER.info(String.format("registro: %s", result.getString(FIELD_LINESTRING)));
 
 			int idRoad = result.getInt(FIELD_ID_LINESTRING);
 			loadFromArrayPoints(arrayPoints, idRoad);
 		}
-		
+
 		ConnectionJDBC.getConnection().close();
 
 	}
@@ -65,16 +63,13 @@ public class SimpleDBOSMImporter implements Importer {
 
 		for (Point point : arrayPoints) {
 			pointCount++;
-			LOGGER.info(String.format("Point [x,y]: %s,%s", point.getX(),
-					point.getY()));
+			LOGGER.info(String.format("Point [x,y]: %s,%s", point.getX(), point.getY()));
 			Node node = addNode(idRoad, point);
 
 			addEdge(idRoad, previousNode, node);
 
-			LOGGER.info(String.format("Graph now has %s nodes",
-					graph.getNumberOfNodes()));
-			LOGGER.info(String.format("Graph now has %s edges",
-					graph.getNumberOfEdges()));
+			LOGGER.info(String.format("Graph now has %s nodes", graph.getNumberOfNodes()));
+			LOGGER.info(String.format("Graph now has %s edges", graph.getNumberOfEdges()));
 
 			previousNode = node;
 		}
@@ -82,14 +77,11 @@ public class SimpleDBOSMImporter implements Importer {
 	}
 
 	private void addEdge(int idRoad, Node previousNode, Node node) {
-		if (previousNode != null
-				&& !previousNode.getId().equals(node.getId())) {
-			LOGGER.info(String.format(
-					"Add edge from previous: %s to current: %s node",
-					previousNode.getId(), node.getId()));
-			Edge edge = new EdgeImpl(idRoad, previousNode.getId()
-					.longValue(), node.getId().longValue(), 0,
-					String.valueOf(idRoad));
+		if (previousNode != null && !previousNode.getId().equals(node.getId())) {
+			LOGGER.info(String.format("Add edge from previous: %s to current: %s node", previousNode.getId(),
+					node.getId()));
+			Edge edge = new EdgeImpl(idRoad, previousNode.getId().longValue(), node.getId().longValue(),
+					(int) DistanceUtils.distanceLatLong(previousNode, node), String.valueOf(idRoad));
 			addCostZero(edge);
 			graph.addEdge(edge);
 
@@ -99,8 +91,7 @@ public class SimpleDBOSMImporter implements Importer {
 	private Node addNode(int idRoad, Point point) {
 		Node node = new NodeImpl(point.getY(), point.getX());
 		node.setLabel(Long.valueOf(idRoad).toString());
-		Long nodeId = graph.getNodeId(
-				GeoUtils.latLongToInt(node.getLatitude()),
+		Long nodeId = graph.getNodeId(GeoUtils.latLongToInt(node.getLatitude()),
 				GeoUtils.latLongToInt(node.getLongitude()));
 
 		if (nodeId != null) {
@@ -108,15 +99,13 @@ public class SimpleDBOSMImporter implements Importer {
 			node = graph.getNode(nodeId);
 		} else {
 			graph.addNode(node);
-			LOGGER.info(String.format(
-					"point inserted in graph with ID: %s", node.getId()));
+			LOGGER.info(String.format("point inserted in graph with ID: %s", node.getId()));
 		}
 		return node;
 	}
 
 	public static void runImport(String tableName) throws IOException {
-		SimpleDBOSMImporter importer = new SimpleDBOSMImporter(tableName,
-				PATH_GRAPH + tableName);
+		SimpleDBOSMImporter importer = new SimpleDBOSMImporter(tableName, PATH_GRAPH + tableName);
 		Graph graph = importer.execute();
 		graph.save();
 
@@ -127,7 +116,8 @@ public class SimpleDBOSMImporter implements Importer {
 		try {
 			loadNodes();
 		} catch (SQLException | ClassNotFoundException | IOException e) {
-			// System.err.println("[ERRO] Ocorreu um erro na construção do grafo.");
+			// System.err.println("[ERRO] Ocorreu um erro na construção do
+			// grafo.");
 			System.err.println(e);
 		}
 		return graph;
@@ -144,7 +134,7 @@ public class SimpleDBOSMImporter implements Importer {
 
 	public static void main(String[] args) {
 		try {
-			SimpleDBOSMImporter.runImport("view_exp_300mil");
+			SimpleDBOSMImporter.runImport("view_exp_100k");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

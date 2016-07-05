@@ -19,7 +19,6 @@ import org.graphast.query.rnn.RNNBreadthFirstSearch;
 import org.graphast.query.route.shortestpath.ShortestPathService;
 import org.graphast.query.route.shortestpath.astar.AStarLinearFunction;
 import org.graphast.query.route.shortestpath.model.Path;
-import org.graphast.util.BenchmarkMemory;
 import org.graphast.util.DateUtils;
 import org.graphast.util.NumberUtils;
 import org.slf4j.LoggerFactory;
@@ -35,11 +34,11 @@ public class CompareRNNSearchMethods {
 		// runAnalysis("view_exp_1k", 10);
 		// runAnalysis("view_exp_10k", Integer.parseInt(args[0]));
 		// runAnalysis("view_exp_50k", Integer.parseInt(args[0]));
-		runAnalysis("view_exp_100k100Pois", 50);
-		runAnalysis("view_exp_100k200Pois", 50);
-		runAnalysis("view_exp_100k300Pois", 50);
-		runAnalysis("view_exp_100k400Pois", 50);
-		runAnalysis("view_exp_100k500Pois", 50);
+		runAnalysis("view_exp_100k100Pois", 100);
+		runAnalysis("view_exp_100k200Pois", 100);
+		runAnalysis("view_exp_100k300Pois", 100);
+		runAnalysis("view_exp_100k400Pois", 100);
+		runAnalysis("view_exp_100k500Pois", 100);
 	}
 
 	public static void runAnalysis(String tableName, int testTimes) throws IOException {
@@ -65,7 +64,7 @@ public class CompareRNNSearchMethods {
 		IRNNTimeDependent rnnAstarVpTree100 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 100);
 
 		Date timestamp = getRandomTimeStamp();
-		Date timeout = DateUtils.parseDate(10, 00, 00);
+		Date timeout = DateUtils.parseDate(23, 55, 00);
 
 		FileWriter rnnBacktrackingFileCsv = new FileWriter(tableName + "_rnn_baseline.csv");
 		FileWriter rnnBFSFileCsv = new FileWriter(tableName + "_rnn_bfs.csv");
@@ -78,7 +77,6 @@ public class CompareRNNSearchMethods {
 		FileWriter rnnAstarFileCsvVpTree75 = new FileWriter(tableName + "_rnn_astar75VpTree.csv");
 		FileWriter rnnAstarFileCsvVpTree100 = new FileWriter(tableName + "_rnn_astar100VpTree.csv");
 		ShortestPathService shortestPathService = new AStarLinearFunction(graph);
-		ShortestPathService shortestPathServiceReverse = new AStarLinearFunction(gboundsReverse);
 
 		writeHeader(rnnBacktrackingFileCsv);
 		writeHeader(rnnBFSFileCsv);
@@ -93,14 +91,14 @@ public class CompareRNNSearchMethods {
 	
 
 		for (int i = 0; i < testTimes; i++) {
-			// Node query = getRandomCustomerInGraph((GraphBounds) gbounds);
-			Node query = gbounds.getNode(27597);
-			log.debug("rnnDFS for query " + query.getId());
+			Node query = getRandomCustomerInGraph((GraphBounds) gbounds);
+			//Node query = gbounds.getNode(73290);
+			//log.debug("rnnDFS for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnBTFS, query, timeout, timestamp, rnnBacktrackingFileCsv,
 					shortestPathService);
 			log.debug("rnnBFS for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gboundsReverse, rnnBFS, query, timeout, timestamp, rnnBFSFileCsv,
-					shortestPathServiceReverse);
+					shortestPathService);
 			log.debug("rnnAstarRTree25 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree25, query, timeout, timestamp, rnnAstarFileCsvRTree25,
 					shortestPathService);
@@ -147,8 +145,8 @@ public class CompareRNNSearchMethods {
 	}
 
 	private static void writeHeader(FileWriter rnnAstarFileCsv) throws IOException {
-		String header = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s", "coordinatesCustomer",
-				"poiCoordinate", "time", "solutionId", "externalId", "travelTime", "nodesSize", "path",
+		String header = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s", "coordinatesCustomer",
+				"poiCoordinate", "time", "solutionId", "travelTime", "nodesSize", "path",
 				"coordinateNodeVisited", "gidCustomer", "gidPoi", "gidVisited", "numberVisitedNodes",
 				"shortestPathCost") + "\n";
 		rnnAstarFileCsv.write(header);
@@ -173,14 +171,13 @@ public class CompareRNNSearchMethods {
 			Double travelTime = null;
 			Integer nodesSize = null;
 			ArrayList<Long> path = null;
-			Long externalId = null;
+			
 			int numberVisitedNodes = 0;
 			if (solution != null && solution.getPath() != null) {
 				solutionId = solution.getId();
 				travelTime = solution.getTravelTime();
 				nodesSize = solution.getPath().size();
 				path = solution.getPath();
-				externalId = Integer.valueOf(graph.getNode(solution.getId()).getCategory()).longValue();
 				numberVisitedNodes = solution.getNumberVisitedNodes();
 
 				String coordinatesCustomer = customer.getLongitude() + "," + customer.getLatitude();
@@ -200,8 +197,8 @@ public class CompareRNNSearchMethods {
 					gidVisited = gidVisited + "-" + nodeVisited.getLabel();
 				}
 
-				String currentLine = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s", coordinatesCustomer,
-						poiCoordinate, time, solutionId, externalId, travelTime, nodesSize, path, coordinateNodeVisited,
+				String currentLine = String.format("%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s;%s", coordinatesCustomer,
+						poiCoordinate, time, solutionId, travelTime, nodesSize, path, coordinateNodeVisited,
 						gidCustomer, gidPoi, gidVisited, numberVisitedNodes, shortesPath.getTotalCost()) + "\n";
 
 				System.out.println(currentLine);
