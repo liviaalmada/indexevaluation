@@ -235,7 +235,7 @@ public class RNNDepthFirstSearchTest {
 		for (int i = 0; i < 100; i++) {
 			
 			long numberOfNodes = graphBounds.getNumberOfNodes();
-			long customer = Double.valueOf(NumberUtils.generatePdseurandom(0, Long.valueOf(numberOfNodes).intValue())).longValue();
+			long customer = Double.valueOf(NumberUtils.generatePseudorandom(0, Long.valueOf(numberOfNodes).intValue())).longValue();
 			NearestNeighbor solution2 = taxiSearch.search(graphBounds.getNode(customer), maxTravelTime, hourServiceTime);
 			
 			Long idSolution2 = null;

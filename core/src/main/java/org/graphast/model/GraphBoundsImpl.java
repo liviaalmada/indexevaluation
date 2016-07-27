@@ -6,6 +6,8 @@ import org.graphast.enums.CompressionType;
 import org.graphast.enums.TimeType;
 import org.graphast.util.FileUtils;
 
+import com.graphhopper.storage.Graph;
+
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
 import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
 
@@ -241,8 +243,16 @@ public class GraphBoundsImpl extends GraphImpl implements GraphBounds, Serializa
 		return this.reverseGraph;
 	}
 	
+	public static void loadFromGraph(String pathGraph){
+		GraphImpl other = new GraphBoundsImpl(pathGraph);
+		other.load();
+		((GraphBoundsImpl) other).createBounds();
+		((GraphBoundsImpl) other).save();
+		
+	}
+	
 	public void loadFromGraph(){
 		super.load();
-		this.createBounds();
+		createBounds();		
 	}
 }

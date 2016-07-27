@@ -123,7 +123,7 @@ public class CompareRNNSearchsMethodsSyntheticAnalysis {
 	private static Node getRandomCustomerInGraph(GraphBounds graph) {
 		Node node;
  		do {
-			long id = Double.valueOf(NumberUtils.generatePdseurandom(0, Long.valueOf(graph.getNumberOfNodes()-1).intValue())).longValue();
+			long id = Double.valueOf(NumberUtils.generatePseudorandom(0, Long.valueOf(graph.getNumberOfNodes()-1).intValue())).longValue();
 			node = graph.getNode(id);
 		} while(node.getCategory()!=-1);
 		return node;

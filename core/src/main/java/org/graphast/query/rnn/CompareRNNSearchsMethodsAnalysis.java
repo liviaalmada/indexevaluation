@@ -143,7 +143,7 @@ public class CompareRNNSearchsMethodsAnalysis {
 		Node node;
 		double[] bounds = new double[]{-3.710467, -38.591078, -3.802376, -38.465530};
  		do {
-			long id = Double.valueOf(NumberUtils.generatePdseurandom(0, Long.valueOf(graph.getNumberOfNodes()-1).intValue())).longValue();
+			long id = Double.valueOf(NumberUtils.generatePseudorandom(0, Long.valueOf(graph.getNumberOfNodes()-1).intValue())).longValue();
 			node = graph.getNode(id);
 		} while(node.getCategory()!=-1 || node.getLatitude()>bounds[0] || node.getLatitude()<bounds[2] || node.getLongitude()<bounds[1] || node.getLongitude()>bounds[3]);
 		return node;

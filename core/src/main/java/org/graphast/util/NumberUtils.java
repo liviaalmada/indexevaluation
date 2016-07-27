@@ -114,7 +114,7 @@ public class NumberUtils {
 		return (short)segment << 16 | displacement & 0xFFFF;
 	}
 	
-	public static double generatePdseurandom(int rangeMin, int rangeMax) {
+	public static double generatePseudorandom(int rangeMin, int rangeMax) {
 		return rangeMin + (rangeMax - rangeMin) * new Random().nextDouble();
 	}
 	

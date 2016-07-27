@@ -54,11 +54,11 @@ public class CompareRNNSearchMethods {
 
 		IRNNTimeDependent rnnBTFS = new RNNBacktrackingSearch((GraphBoundsImpl) gbounds);
 		IRNNTimeDependent rnnBFS = new RNNBreadthFirstSearch((GraphBoundsImpl) gboundsReverse);
-		IRNNTimeDependent rnnAstarRTree25 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 25);
+		/*IRNNTimeDependent rnnAstarRTree25 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 25);
 		IRNNTimeDependent rnnAstarRTree50 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 50);
 		IRNNTimeDependent rnnAstarRTree75 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 75);
-		IRNNTimeDependent rnnAstarRTree100 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 100);
-		IRNNTimeDependent rnnAstarVpTree25 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 25);
+		IRNNTimeDependent rnnAstarRTree100 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(), 100);*/
+		/*IRNNTimeDependent rnnAstarVpTree25 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 25);
 		IRNNTimeDependent rnnAstarVpTree50 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 50);
 		IRNNTimeDependent rnnAstarVpTree75 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 75);
 		IRNNTimeDependent rnnAstarVpTree100 = new RNNAstarSearch(graph, new VPTreePoisIndex(), 100);
@@ -99,7 +99,7 @@ public class CompareRNNSearchMethods {
 			log.debug("rnnBFS for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gboundsReverse, rnnBFS, query, timeout, timestamp, rnnBFSFileCsv,
 					shortestPathService);
-			log.debug("rnnAstarRTree25 for query " + query.getId());
+	/*		log.debug("rnnAstarRTree25 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree25, query, timeout, timestamp, rnnAstarFileCsvRTree25,
 					shortestPathService);
 			log.debug("rnnAstarRTree50 for query " + query.getId());
@@ -122,20 +122,20 @@ public class CompareRNNSearchMethods {
 					rnnAstarFileCsvVpTree75, shortestPathService);
 			log.debug("rnnAstarVpTree100 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree100, query, timeout, timestamp,
-					rnnAstarFileCsvVpTree100, shortestPathService);
+					rnnAstarFileCsvVpTree100, shortestPathService);*/
 
-		}
+//		}
 
-		rnnBacktrackingFileCsv.close();
-		rnnBFSFileCsv.close();
-		rnnAstarFileCsvRTree25.close();
-		rnnAstarFileCsvRTree50.close();
-		rnnAstarFileCsvRTree75.close();
-		rnnAstarFileCsvRTree100.close();
-		rnnAstarFileCsvVpTree25.close();
-		rnnAstarFileCsvVpTree50.close();
-		rnnAstarFileCsvVpTree75.close();
-		rnnAstarFileCsvVpTree100.close();
+//		rnnBacktrackingFileCsv.close();
+//		rnnBFSFileCsv.close();
+//		rnnAstarFileCsvRTree25.close();
+//		rnnAstarFileCsvRTree50.close();
+//		rnnAstarFileCsvRTree75.close();
+//		rnnAstarFileCsvRTree100.close();
+//		rnnAstarFileCsvVpTree25.close();
+//		rnnAstarFileCsvVpTree50.close();
+//		rnnAstarFileCsvVpTree75.close();
+//		rnnAstarFileCsvVpTree100.close();
 	}
 
 	private static Date getRandomTimeStamp() {
@@ -222,7 +222,7 @@ public class CompareRNNSearchMethods {
 		double[] bounds = new double[] { -3.710467, -38.591078, -3.802376, -38.465530 };
 		do {
 			long id = Double
-					.valueOf(NumberUtils.generatePdseurandom(0, Long.valueOf(graph.getNumberOfNodes() - 1).intValue()))
+					.valueOf(NumberUtils.generatePseudorandom(0, Long.valueOf(graph.getNumberOfNodes() - 1).intValue()))
 					.longValue();
 			node = graph.getNode(id);
 		} while (node.getCategory() != -1 || node.getLatitude() > bounds[0] || node.getLatitude() < bounds[2]

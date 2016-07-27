@@ -61,7 +61,7 @@ public class NearestNeighbor implements Comparable<NearestNeighbor> {
 	}
 
 	public String toString(){
-        return "(NN:"+id+" TT: "+distance+ " Path: " + path +
+        return "(NN:"+id+" Distance: "+distance+" TT: "+travelTime+ " Path: " + path +
         		" Number Visited Nodes: " + numberVisitedNodes + ")";
     }
  
