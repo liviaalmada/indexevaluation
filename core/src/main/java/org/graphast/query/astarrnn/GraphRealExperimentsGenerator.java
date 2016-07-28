@@ -75,7 +75,7 @@ public class GraphRealExperimentsGenerator {
 																				// of
 																				// taxi
 																				// position
-						if ((hourRange.getTime() < dh.getTime()) && hourRange.getTime() + 24 * oneHour > dh.getTime()) {
+						//if ((hourRange.getTime() < dh.getTime()) && hourRange.getTime() + 24 * oneHour > dh.getTime()) {
 							if (!AddedNodes.contains(id + ";")) { // Test to
 																	// avoid
 																	// registering
@@ -85,7 +85,7 @@ public class GraphRealExperimentsGenerator {
 								list.add(new Point(lat, lon));
 								AddedNodes += id + ";";
 							}
-						}
+						//}
 					}
 					col++;
 					if (col == 8)

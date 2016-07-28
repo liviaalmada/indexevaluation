@@ -35,21 +35,21 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 	private static org.slf4j.Logger log = LoggerFactory.getLogger(CompareRNNSearchMethodsAndPoisMapping.class);
 
 	private static List<Point> readRealPois;
-
+	private static RTreePoisIndexImpl rtree;
 	//private static long preprocessingTime;
 
 	public static void main(String[] args) throws IOException {
 		
 		if(args[0]!=null) PATH_GRAPH = args[0];
 
-		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 12:01:01 GMT-0300 (BRT)",
+		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 12:01:01 GMT-0300 (BRT)",
 				"points_2016-07-23.12_01_01.txt", "100k12horas");
 		
-	/*	runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 07:01:01 GMT-0300 (BRT)",
+		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 07:01:01 GMT-0300 (BRT)",
 				"points_2016-07-23.07_01_01.txt", "100k7horas");
 		
-		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 17:01:01 GMT-0300 (BRT)",
-				"points_2016-07-23.17_01_01.txt", "100k17horas");*/
+		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 17:01:01 GMT-0300 (BRT)",
+				"points_2016-07-23.17_01_01.txt", "100k17horas");
 	}
 
 	/**
@@ -65,9 +65,11 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 		graph.load();
 		GraphImpl gbounds = new GraphBoundsImpl(tableName);
 		((GraphBoundsImpl) gbounds).loadFromGraph();
+		
 
 		GraphImpl gboundsReverse = new GraphBoundsImpl(tableName);
 		((GraphBoundsImpl) gboundsReverse).loadFromGraph();
+		rtree = new RTreePoisIndexImpl(gboundsReverse);
 
 		Date timestamp = getRandomTimeStamp();
 		Date timeout = DateUtils.parseDate(23, 00, 00);
@@ -81,32 +83,33 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 		}
 
 		readRealPois = GraphRealExperimentsGenerator.readRealPois(poisFile, timePois);
+		System.out.println(readRealPois.size());
 
 		IRNNTimeDependent rnnBTFS = new RNNBacktrackingSearch((GraphBoundsImpl) gbounds);
 		IRNNTimeDependent rnnBFS = new RNNBreadthFirstSearch((GraphBoundsImpl) gboundsReverse);
-		IRNNTimeDependent rnnAstarRTree1 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(gbounds), 1);
-		IRNNTimeDependent rnnAstarRTree25 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(gbounds), 25);
-		IRNNTimeDependent rnnAstarRTree50 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(graph), 50);
-		IRNNTimeDependent rnnAstarRTree75 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(graph), 75);
-		IRNNTimeDependent rnnAstarRTree100 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(graph), 100);
-		IRNNTimeDependent rnnAstarVpTree1 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 1);
-		IRNNTimeDependent rnnAstarVpTree25 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 25);
-		IRNNTimeDependent rnnAstarVpTree50 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 50);
-		IRNNTimeDependent rnnAstarVpTree75 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 75);
-		IRNNTimeDependent rnnAstarVpTree100 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 100);
+		IRNNTimeDependent rnnAstarRTree1 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(gbounds), 10);
+		IRNNTimeDependent rnnAstarRTree25 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(gbounds), 20);
+		IRNNTimeDependent rnnAstarRTree50 = new RNNAstarSearch(gbounds, new RTreePoisIndexImpl(graph), 30);
+		IRNNTimeDependent rnnAstarRTree75 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(graph), 40);
+		IRNNTimeDependent rnnAstarRTree100 = new RNNAstarSearch(graph, new RTreePoisIndexImpl(graph), 50);
+		IRNNTimeDependent rnnAstarVpTree1 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 10);
+		IRNNTimeDependent rnnAstarVpTree25 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 10);
+		IRNNTimeDependent rnnAstarVpTree50 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 30);
+		IRNNTimeDependent rnnAstarVpTree75 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 40);
+		IRNNTimeDependent rnnAstarVpTree100 = new RNNAstarSearch(graph, new VPTreePoisIndex(graph), 50);
 
 		FileWriter rnnBacktrackingFileCsv = new FileWriter(prefixfile + "_rnn_baseline.csv");
 		FileWriter rnnBFSFileCsv = new FileWriter(prefixfile + "_rnn_bfs.csv");
-		FileWriter rnnAstarFileCsvRTree1 = new FileWriter(prefixfile + "_rnn_astar1RTree.csv");
-		FileWriter rnnAstarFileCsvRTree25 = new FileWriter(prefixfile + "_rnn_astar25RTree.csv");
-		FileWriter rnnAstarFileCsvRTree50 = new FileWriter(prefixfile + "_rnn_astar50RTree.csv");
-		FileWriter rnnAstarFileCsvRTree75 = new FileWriter(prefixfile + "_rnn_astar75RTree.csv");
-		FileWriter rnnAstarFileCsvRTree100 = new FileWriter(prefixfile + "_rnn_astar100RTree.csv");
-		FileWriter rnnAstarFileCsvVpTree1 = new FileWriter(prefixfile + "_rnn_astar1VpTree.csv");
-		FileWriter rnnAstarFileCsvVpTree25 = new FileWriter(prefixfile + "_rnn_astar25VpTree.csv");
-		FileWriter rnnAstarFileCsvVpTree50 = new FileWriter(prefixfile + "_rnn_astar50VpTree.csv");
-		FileWriter rnnAstarFileCsvVpTree75 = new FileWriter(prefixfile + "_rnn_astar75VpTree.csv");
-		FileWriter rnnAstarFileCsvVpTree100 = new FileWriter(prefixfile + "_rnn_astar100VpTree.csv");
+		FileWriter rnnAstarFileCsvRTree1 = new FileWriter(prefixfile + "_rnn_astar10RTree.csv");
+		FileWriter rnnAstarFileCsvRTree25 = new FileWriter(prefixfile + "_rnn_astar20RTree.csv");
+		FileWriter rnnAstarFileCsvRTree50 = new FileWriter(prefixfile + "_rnn_astar30RTree.csv");
+		FileWriter rnnAstarFileCsvRTree75 = new FileWriter(prefixfile + "_rnn_astar40RTree.csv");
+		FileWriter rnnAstarFileCsvRTree100 = new FileWriter(prefixfile + "_rnn_astar50RTree.csv");
+		FileWriter rnnAstarFileCsvVpTree1 = new FileWriter(prefixfile + "_rnn_astar10VpTree.csv");
+		FileWriter rnnAstarFileCsvVpTree25 = new FileWriter(prefixfile + "_rnn_astar20VpTree.csv");
+		FileWriter rnnAstarFileCsvVpTree50 = new FileWriter(prefixfile + "_rnn_astar30VpTree.csv");
+		FileWriter rnnAstarFileCsvVpTree75 = new FileWriter(prefixfile + "_rnn_astar40VpTree.csv");
+		FileWriter rnnAstarFileCsvVpTree100 = new FileWriter(prefixfile + "_rnn_astar50VpTree.csv");
 
 		ShortestPathService shortestPathService = new AStarLinearFunction(graph);
 
@@ -132,34 +135,34 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 			log.debug("rnnBFS for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gboundsReverse, rnnBFS, query, timeout, timestamp, rnnBFSFileCsv,
 					shortestPathService);
-			log.debug("rnnAstarRTree1 for query " + query.getId());
+			log.debug("rnnAstarRTree10 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree1, query, timeout, timestamp, rnnAstarFileCsvRTree1,
 					shortestPathService);
-			log.debug("rnnAstarRTree25 for query " + query.getId());
+			log.debug("rnnAstarRTree20 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree25, query, timeout, timestamp, rnnAstarFileCsvRTree25,
 					shortestPathService);
-			log.debug("rnnAstarRTree50 for query " + query.getId());
+			log.debug("rnnAstarRTree30 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree50, query, timeout, timestamp, rnnAstarFileCsvRTree50,
 					shortestPathService);
-			log.debug("rnnAstarRTree75 for query " + query.getId());
+			log.debug("rnnAstarRTree40 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree75, query, timeout, timestamp, rnnAstarFileCsvRTree75,
 					shortestPathService);
-			log.debug("rnnAstarRTree100 for query " + query.getId());
+			log.debug("rnnAstarRTree50 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarRTree100, query, timeout, timestamp,
 					rnnAstarFileCsvRTree100, shortestPathService);
-			log.debug("rnnAstarVpTree1 for query " + query.getId());
+			log.debug("rnnAstarVpTree10 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree1, query, timeout, timestamp, rnnAstarFileCsvVpTree1,
 					shortestPathService);
-			log.debug("rnnAstarVpTree25 for query " + query.getId());
+			log.debug("rnnAstarVpTree20 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree25, query, timeout, timestamp,
 					rnnAstarFileCsvVpTree25, shortestPathService);
-			log.debug("rnnAstarVpTree50 for query " + query.getId());
+			log.debug("rnnAstarVpTree30 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree50, query, timeout, timestamp,
 					rnnAstarFileCsvVpTree50, shortestPathService);
-			log.debug("rnnAstarVpTree75 for query " + query.getId());
+			log.debug("rnnAstarVpTree40 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree75, query, timeout, timestamp,
 					rnnAstarFileCsvVpTree75, shortestPathService);
-			log.debug("rnnAstarVpTree100 for query " + query.getId());
+			log.debug("rnnAstarVpTree50 for query " + query.getId());
 			runSearchAndWrite((GraphBounds) gbounds, rnnAstarVpTree100, query, timeout, timestamp,
 					rnnAstarFileCsvVpTree100, shortestPathService);
 
@@ -248,7 +251,10 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 			((RNNAstarSearch) rnn).indexPois(pois);
 
 		} else {
-			RTreePoisIndexImpl rtree = new RTreePoisIndexImpl(graph);
+			for(long id=0; id<graph.getNumberOfNodes();id++){
+				graph.setNodeCategory(id, -1);
+			}
+			
 			for (Point point : pois) {
 				// Procura o nó mais próximo do poi e inclui o poi numa lista
 				Long nearestNodeId = rtree.nearestNode(point);
