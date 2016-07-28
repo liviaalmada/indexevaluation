@@ -42,14 +42,14 @@ public class CompareRNNSearchMethodsAndPoisMapping {
 		
 		if(args[0]!=null) PATH_GRAPH = args[0];
 
-		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 12:01:01 GMT-0300 (BRT)",
+		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 12:01:01 GMT-0300 (BRT)",
 				"points_2016-07-23.12_01_01.txt", "100k12horas");
 		
-		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 07:01:01 GMT-0300 (BRT)",
+	/*	runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 07:01:01 GMT-0300 (BRT)",
 				"points_2016-07-23.07_01_01.txt", "100k7horas");
 		
-		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 100, "Sat Jul 23 2016 17:01:01 GMT-0300 (BRT)",
-				"points_2016-07-23.17_01_01.txt", "100k17horas");
+		runAnalysis(PATH_GRAPH+"//"+"view_exp_100k0Pois", 1, "Sat Jul 23 2016 17:01:01 GMT-0300 (BRT)",
+				"points_2016-07-23.17_01_01.txt", "100k17horas");*/
 	}
 
 	/**
